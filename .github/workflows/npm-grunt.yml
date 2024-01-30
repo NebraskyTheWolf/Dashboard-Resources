@@ -24,4 +24,5 @@ jobs:
 
     - name: Build
       run: |
+        npm i --save
         npm run production
