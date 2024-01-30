@@ -18,6 +18,11 @@
   @include font-variant($dark);
 }
 
+.bg-dark-light {
+  background-color: #374040;
+  @include font-variant($dark);
+}
+
 .bg-black {
   background-color: $black;
   @include font-variant($black);
@@ -104,4 +109,8 @@ a.bg-light {
 
 .text-muted {
   color: $text-muted!important;
+}
+
+.bg-fluffici-dark {
+  background-color: #0E1414;
 }
