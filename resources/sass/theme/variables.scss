@@ -1,5 +1,6 @@
 // Colors
 $fluffici-color: #FF002E; //#ac5ca0;
+$fluffici-background-color: #0E1414;
 
 
 $white: #ffffff;
@@ -25,8 +26,8 @@ $grey: #495057;
 $grey-light: mix($grey, #ffffff, 10%);
 
 $body-bg: #edeef0; //lighten($light, 1%);
-$text-color: #394247;
-$text-muted: lighten($text-color, 20%);
+$text-color: #edeef0;
+$text-muted: lighten($text-color, 10%);
 
 $font-size-root:              .925rem;
 $font-size-base:              1rem;
@@ -34,8 +35,8 @@ $font-size-sm:                $font-size-base * .875;
 $font-size-lg:                $font-size-base * 1.25;
 
 
-$link-color: darken($text-color, 15%);
-$link-hover-color: darken($text-color, 30%);
+$link-color: darken($blue, 15%);
+$link-hover-color: darken($blue, 30%);
 
 $dropdown-border-radius: 0.35rem;
 $border-radius-base: 0.2rem;

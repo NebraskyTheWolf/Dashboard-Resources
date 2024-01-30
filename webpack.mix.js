@@ -39,9 +39,6 @@ mix
     .options({
         processCssUrls: false,
     })
-    .postCss('public/css/dashy.css', 'css/dashy.rtl.css', [
-        require('rtlcss'),
-    ])
     .js('resources/js/app.js', 'js/dashy.js')
     .extract([
         'stimulus', 'stimulus/webpack-helpers', 'turbo',
@@ -53,5 +50,3 @@ mix
     ])
     .setPublicPath('public')
     .version();
-
-/* Orchid mix config end */
