@@ -107,6 +107,14 @@ a.bg-light {
   color: #000;
 }
 
+.text-primary {
+  color: $primary;
+}
+
+.text-green {
+  color: rgb(177, 245, 75);
+}
+
 .text-muted {
   color: $text-muted!important;
 }
