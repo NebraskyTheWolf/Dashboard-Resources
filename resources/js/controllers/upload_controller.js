@@ -107,7 +107,7 @@ export default class extends ApplicationController {
         }
 
         axios
-            .post("https://autumn.rsiniya.uk/attachments", attach)
+            .post("https://autumn.fluffici.eu/attachments", attach)
             .then(result => {
                 if (result.id != null || result.id != undefined) {
                     this.this.attachments[name].remote_id = result.id
@@ -225,10 +225,10 @@ export default class extends ApplicationController {
 
         const controller = this;
 
-        const urlDelete = "http://localhost:3000/attachments/delete/";
+        const urlDelete = "https://autumn.fluffici.eu/attachments/delete/";
 
         this.dropZone = new Dropzone(this.element.querySelector('#' + this.data.get('id')), {
-            url: "http://localhost:3000/attachments",
+            url: "https://autumn.fluffici.eu/attachments",
             method: 'post',
             uploadMultiple: true,
             maxFilesize: this.data.get('max-file-size'),
@@ -493,7 +493,7 @@ export default class extends ApplicationController {
             size: attachment.size,
             type: attachment.mime,
             status: Dropzone.ADDED,
-            url: `http://localhost:3000/attachments/${attachment.remote_id}`,
+            url: `https://autumn.fluffici.eu/attachments/${attachment.remote_id}`,
             data: attachment,
         };
 

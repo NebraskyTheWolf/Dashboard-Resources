@@ -63,7 +63,7 @@ export default class extends ApplicationController {
 
         var tag = document.getElementById("bucket").value;
 
-        fetch(`https://autumn.rsiniya.uk/${tag}`, {
+        fetch(`https://autumn.fluffici.eu/${tag}`, {
             method: 'post',
             body: data
         }).then((res) => {
@@ -168,7 +168,7 @@ export default class extends ApplicationController {
 
         pip.innerHTML = `
             <input type="hidden" name="${this.nameValue}" value="${attachment}">
-            <img class="attach-image rounded border user-select-none" src="https://autumn.rsiniya.uk/${bucket}/${attachment}"/>
+            <img class="attach-image rounded border user-select-none" src="https://autumn.fluffici.eu/${bucket}/${attachment}"/>
         `;
 
         if (replace !== null) {
