@@ -36,7 +36,7 @@ export default class extends ApplicationController {
         let tag = document.getElementById('bucket').value;
 
         if (objectId != undefined || objectId != null && toString(objectId).length > 8) {
-            this.element.querySelector('.cropper-preview').src = `https://autumn.rsiniya.uk/${tag}/${objectId}`;
+            this.element.querySelector('.cropper-preview').src = `https://autumn.fluffici.eu/${tag}/${objectId}`;
         } else {
             this.element.querySelector('.cropper-preview').classList.add('none');
             this.element.querySelector('.cropper-remove').classList.add('none');
@@ -126,7 +126,7 @@ export default class extends ApplicationController {
 
             var tag = document.getElementById("bucket").value;
 
-            fetch(`https://autumn.rsiniya.uk/${tag}`, {
+            fetch(`https://autumn.fluffici.eu/${tag}`, {
                 method: 'post',
                 body: formData
             }).then((res) => {
@@ -145,7 +145,7 @@ export default class extends ApplicationController {
         data.then(async result => {
             var objectId = result.id;
 
-            let image = `https://autumn.rsiniya.uk/${tag}/${objectId}`;
+            let image = `https://autumn.fluffici.eu/${tag}/${objectId}`;
 
             element.querySelector('.cropper-preview').src = image;
             element.querySelector('.cropper-preview').classList.remove('none');
