@@ -38,7 +38,7 @@ export default class extends ApplicationController {
             zoom: default_zoom
         });
 
-        this.leafLayer = L.tileLayer('https://api.mapy.cz/v1/maptiles/outdoor/{s}/{x}/{y}/{z}?apikey=Nek1bS4obqY5JfDZgE4Me29S4zqrtQub2k-9r5anD_g.png', {
+        this.leafLayer = L.tileLayer('https://api.mapy.cz/v1/maptiles/outdoor/256/{x}/{y}/{z}?apikey=Nek1bS4obqY5JfDZgE4Me29S4zqrtQub2k-9r5anD_g.png', {
             attribution: '&copy; <a href="https://developer.mapy.cz/copyright/">Seznam.cz a.s. a další</a>',
             maxZoom: max_zoom
         }).addTo(this.leafletMap);
@@ -67,6 +67,27 @@ export default class extends ApplicationController {
         if(tabEl !== null){
             tabEl.addEventListener('shown.bs.tab',  () => this.leafletMap.invalidateSize())
         }
+
+        const LogoControl = L.Control.extend({
+                options: {
+                position: 'bottomleft',
+                },
+            
+                onAdd: function (map) {
+                const container = L.DomUtil.create('div');
+                const link = L.DomUtil.create('a', '', container);
+            
+                link.setAttribute('href', 'http://mapy.cz/');
+                link.setAttribute('target', '_blank');
+                link.innerHTML = '<img src="https://api.mapy.cz/img/api/logo.svg" />';
+                L.DomEvent.disableClickPropagation(link);
+            
+                return container;
+                },
+            });
+
+          // finally we add our LogoControl to the map
+        new LogoControl().addTo(this.leafletMap);
     }
 
     /**
@@ -91,7 +112,7 @@ export default class extends ApplicationController {
         }
 
         axios
-            .get('https://api.mapy.cz/v1/suggest?query=' + this.searchTarget.value + '&lang=cs&limit=5&apikey=Nek1bS4obqY5JfDZgE4Me29S4zqrtQub2k-9r5anD_g')
+            .get('https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + this.searchTarget.value)
             .then(response => {
 
                 let items = [];
