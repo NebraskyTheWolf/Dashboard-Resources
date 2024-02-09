@@ -38,8 +38,8 @@ export default class extends ApplicationController {
             zoom: default_zoom
         });
 
-        this.leafLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        this.leafLayer = L.tileLayer('https://api.mapy.cz/v1/maptiles/outdoor/{s}/{x}/{y}/{z}?apikey=Nek1bS4obqY5JfDZgE4Me29S4zqrtQub2k-9r5anD_g.png', {
+            attribution: '&copy; <a href="https://developer.mapy.cz/copyright/">Seznam.cz a.s. a další</a>',
             maxZoom: max_zoom
         }).addTo(this.leafletMap);
 
@@ -91,7 +91,7 @@ export default class extends ApplicationController {
         }
 
         axios
-            .get('https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + this.searchTarget.value)
+            .get('https://api.mapy.cz/v1/suggest?query=' + this.searchTarget.value + '&lang=cs&limit=5&apikey=Nek1bS4obqY5JfDZgE4Me29S4zqrtQub2k-9r5anD_g')
             .then(response => {
 
                 let items = [];
