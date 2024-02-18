@@ -1,0 +1,117 @@
+.body-primary {
+    background-color: honeydew;
+}
+
+.footer-primary {
+    position: sticky;
+    height: 110px;
+    top: calc( 100vh - 100px );
+}
+
+.content-nav {
+    display: flex;
+    border-bottom-left-radius: 25px!important;
+    border-bottom-right-radius: 25px!important;
+    height: 89px!important;
+    background-color: #374040!important;
+    width: auto;
+    overflow: hidden;
+}
+
+.content-nav .nav-bar {
+    display: inline-flex;
+    margin-top: 8px;
+    margin-left:30%!important;
+    border-radius: 25px;
+    border-color: #0e1414!important;
+    background-color: #293333!important;
+    justify-content:space-between;
+    width: 891px;
+    height: 70px;
+}
+
+.content-nav .logo {
+    margin-top: 8px;
+    margin-left:2%!important
+}
+
+.content-nav .neon {
+    margin-left:3%!important
+}
+
+.content-nav .arrow {
+    margin-bottom: 40px!important;
+    margin-left:0.4rem!important;
+}
+
+.title {
+    display: block;
+    font-family: "Luckiest Guy";
+    text-transform: uppercase;
+    font-size: xxx-large;
+    margin-left:4.4rem!important;
+    margin-top: 160px;
+    color: white;
+}
+
+.button-title {
+    border-color: #0a4fff;
+    border-radius: 15px;
+    display: inline;
+    width: 150px;
+    height: 50px;
+    margin-top: -10px;
+    margin-left:50%!important;
+}
+
+.content-container {
+    border-top-left-radius: 25px!important;
+    border-top-right-radius: 25px!important;
+
+    display: block;
+    background-color: #0e1414;
+    position: relative;
+    width: auto;
+    height: 100%;
+}
+
+.site-header {
+    display: block;
+    background-attachment: fixed;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    height: 100%;
+
+    position: sticky;
+    overflow: hidden;
+}
+
+.site-header:after {
+    height: 75px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+
+    transform-origin: bottom right;
+
+    width: 103%;
+    padding-bottom: 7.1%;
+    left: -1.5%;
+}
+
+.site-header h2.ui.header {
+    color: #fff;
+    font-weight: 300;
+    font-size: 30px;
+
+    margin-top: 70px;
+    margin-left: 30px;
+    margin-bottom: 40px;
+}
+
+.site-header h2.ui.header p {
+    font-size: 18px;
+    margin-left: 65px;
+}

@@ -32,17 +32,7 @@ export default class extends ApplicationController {
      *
      */
     connect() {
-        let objectId = document.getElementById('object_id').value;
-        let tag = document.getElementById('bucket').value;
-
-        if (objectId != undefined || objectId != null && toString(objectId).length > 8) {
-            this.element.querySelector('.cropper-preview').src = `https://autumn.fluffici.eu/${tag}/${objectId}`;
-        } else {
-            this.element.querySelector('.cropper-preview').classList.add('none');
-            this.element.querySelector('.cropper-remove').classList.add('none');
-
-            this.clear()
-        }
+        this.clear()
 
         let cropPanel = this.element.querySelector('.upload-panel');
 

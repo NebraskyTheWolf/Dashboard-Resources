@@ -1,6 +1,5 @@
 import * as Turbo from '@hotwired/turbo';
 import * as Bootstrap from 'bootstrap';
-import Echo from "laravel-echo";
 import * as Pusher from "pusher-js";
 
 import { Application } from '@hotwired/stimulus';

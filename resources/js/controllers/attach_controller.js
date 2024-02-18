@@ -37,11 +37,6 @@ export default class extends ApplicationController {
 
     connect() {
         this.togglePlaceholderShow();
-        var avatarId = document.getElementById("avatar_id").value;
-        if (avatarId != null
-            || avatarId != undefined) {
-            this.renderPreview(avatarId, 'avatars');
-        }
     }
 
     change(event) {
