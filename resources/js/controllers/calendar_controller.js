@@ -14,7 +14,7 @@ export default class extends ApplicationController {
         this.editable = this.data.get('editable')
         this.color = this.data.get('color')
         this.locale = this.data.get('locale')
-        this.initialView = this.data.get('initialView')
+        this.initialView = this.data.get('initial-view')
 
         this.isGoogleCalendar = this.data.get('google-calendar')
         this.googleCalendarAPI = this.data.get('google-calendar-secret')
@@ -25,16 +25,21 @@ export default class extends ApplicationController {
         console.log('Loading calendar...')
 
         if (this.isGoogleCalendar) {
-            this.calendar = new Calendar(document.getElementById(this.data.get('slug')), {
-                timeZone: 'Europe/Prague',
+            this.calendar = new Calendar(this.calendarEL, {
                 plugins: [dayGridPlugin, timeGridPlugin, listPlugin,  googleCalendar, interactionPlugin ],
                 locale: this.locale,
                 googleCalendarApiKey: this.googleCalendarAPI,
                 events: {
                     googleCalendarId: this.googleCalendarURL
                 },
-                droppable: true,
                 editable: this.editable,
+                droppable: true,
+                headerToolbar: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: 'dayGridWeek,dayGridDay'
+                },
+                selectable: true
             });
 
             console.log('Google calendar detected.')
@@ -42,10 +47,9 @@ export default class extends ApplicationController {
             this.calendar.render();
             console.log('Google calendar render fired.')
         } else {
-            this.calendar = new Calendar(document.getElementById(this.data.get('slug')), {
+            this.calendar = new Calendar(this.calendarEL, {
                 timeZone: 'Europe/Prague',
                 plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
-                initialView: this.initialView,
                 eventSources: [
                     {
                         url: `https://dashboard.fluffici.eu/api/calendar/events?calendarId=${this.slug}`,
@@ -67,7 +71,8 @@ export default class extends ApplicationController {
                     left: 'prev,next',
                     center: 'title',
                     right: 'dayGridWeek,dayGridDay'
-                }
+                },
+                selectable: true
             });
 
             console.log('Custom sourced calendar detected.')
