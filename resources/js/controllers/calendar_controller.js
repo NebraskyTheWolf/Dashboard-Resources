@@ -10,9 +10,6 @@ import googleCalendar from '@fullcalendar/google-calendar';
 export default class extends ApplicationController {
 
     connect() {
-        const selector = this.element.querySelector('.calendar').id;
-        let element = document.getElementById(selector);
-
         this.slug = this.data.get('slug')
         this.editable = this.data.get('editable')
         this.color = this.data.get('color')
@@ -23,21 +20,29 @@ export default class extends ApplicationController {
         this.googleCalendarAPI = this.data.get('google-calendar-secret')
         this.googleCalendarURL = this.data.get('google-calendar-url')
 
+        this.calendarEL = document.getElementById("calendar");
+
+        console.log('Loading calendar...')
+
         if (this.isGoogleCalendar) {
-            this.calendar = new Calendar(element, {
+            this.calendar = new Calendar(document.getElementById(this.data.get('slug')), {
+                timeZone: 'Europe/Prague',
                 plugins: [dayGridPlugin, timeGridPlugin, listPlugin,  googleCalendar, interactionPlugin ],
                 locale: this.locale,
                 googleCalendarApiKey: this.googleCalendarAPI,
                 events: {
                     googleCalendarId: this.googleCalendarURL
-                }
+                },
+                droppable: true,
+                editable: this.editable,
             });
 
-            this.drawEvent = () => setTimeout(() => {
-                this.calendar.render();
-            }, 100);
+            console.log('Google calendar detected.')
+
+            this.calendar.render();
+            console.log('Google calendar render fired.')
         } else {
-            this.calendar = new Calendar(element, {
+            this.calendar = new Calendar(document.getElementById(this.data.get('slug')), {
                 timeZone: 'Europe/Prague',
                 plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
                 initialView: this.initialView,
@@ -65,6 +70,8 @@ export default class extends ApplicationController {
                 }
             });
 
+            console.log('Custom sourced calendar detected.')
+
             this.calendar.on('eventAdd', (data) => {
                 element.dispatchEvent(new Event('event-add'));
                 this.addToServer(data)
@@ -80,9 +87,8 @@ export default class extends ApplicationController {
                 this.removeToServer(data)
             });
 
-            this.drawEvent = () => setTimeout(() => {
-                this.calendar.render();
-            }, 100);
+            this.calendar.render();
+            console.log('Custom calendar render fired.')
         }
 
         this.autoUpdate()

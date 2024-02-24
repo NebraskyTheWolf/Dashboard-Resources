@@ -47,7 +47,9 @@ mix
         'dropzone', 'cropperjs', 'tom-select', 'frappe-charts', 'inputmask',
         'simplemde', 'axios', 'leaflet', 'codeflask',
         'flatpickr', 'quill', 'codemirror', 'typo-js', 'sortablejs',
-        'node:zlib', 'node-fetch'
+        'node:zlib', 'node-fetch', 'pusher-js', '@fullcalendar/daygrid',
+        '@fullcalendar/timegrid', '@fullcalendar/list', '@fullcalendar/interaction',
+        '@fullcalendar/google-calendar', '@pusher/push-notifications-web', '@fullcalendar/core'
     ])
     .setPublicPath('public')
     .version();
