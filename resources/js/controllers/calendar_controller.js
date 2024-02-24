@@ -16,12 +16,12 @@ export default class extends ApplicationController {
         this.slug = this.data.get('slug')
         this.editable = this.data.get('editable')
         this.color = this.data.get('color')
-        this.locale = this.data.get('local')
+        this.locale = this.data.get('locale')
         this.initialView = this.data.get('initialView')
 
-        this.isGoogleCalendar = this.data.get('google-calender')
-        this.googleCalendarAPI = this.data.get('google-calender-secret')
-        this.googleCalendarURL = this.data.get('google-calender-url')
+        this.isGoogleCalendar = this.data.get('googleCalender')
+        this.googleCalendarAPI = this.data.get('googleCalenderSecret')
+        this.googleCalendarURL = this.data.get('googleCalenderUrl')
 
         if (this.isGoogleCalendar) {
             this.calendar = new Calendar(element, {
