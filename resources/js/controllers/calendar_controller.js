@@ -19,9 +19,9 @@ export default class extends ApplicationController {
         this.locale = this.data.get('locale')
         this.initialView = this.data.get('initialView')
 
-        this.isGoogleCalendar = this.data.get('googleCalender')
-        this.googleCalendarAPI = this.data.get('googleCalenderSecret')
-        this.googleCalendarURL = this.data.get('googleCalenderUrl')
+        this.isGoogleCalendar = this.data.get('google-calendar')
+        this.googleCalendarAPI = this.data.get('google-calendar-secret')
+        this.googleCalendarURL = this.data.get('google-calendar-url')
 
         if (this.isGoogleCalendar) {
             this.calendar = new Calendar(element, {
@@ -100,7 +100,7 @@ export default class extends ApplicationController {
     }
 
     addToServer(data) {
-        fetch(`https://dashboard.fluffici.eu/api/calendar/add`, {
+        fetch(`https://dashboard.fluffici.eu/api/calendar/add?calendarId=${this.slug}`, {
             method: 'post',
             body: data.event.toJSON()
         }).then((res) => {
@@ -114,7 +114,7 @@ export default class extends ApplicationController {
     }
 
     changeToServer(data) {
-        fetch(`https://dashboard.fluffici.eu/api/calendar/update`, {
+        fetch(`https://dashboard.fluffici.eu/api/calendar/update?calendarId=${this.slug}`, {
             method: 'post',
             body: JSON.parse({
                 old: data.oldEvent.toJSON(),
@@ -131,7 +131,7 @@ export default class extends ApplicationController {
     }
 
     removeToServer(data) {
-        fetch(`https://dashboard.fluffici.eu/api/calendar/remove`, {
+        fetch(`https://dashboard.fluffici.eu/api/calendar/remove?calendarId=${this.slug}`, {
             method: 'post',
             body: JSON.parse({
                 current: data.event.toJSON()
