@@ -19,6 +19,7 @@
     "@hotwired/stimulus-webpack-helpers": "^1.0.1",
     "@hotwired/turbo": "^7.2.0",
     "@popperjs/core": "^2.9.2",
+    "@pusher/push-notifications-web": "^1.1.0",
     "axios": "^1.1.3",
     "bootstrap": "~5.2.0",
     "codeflask": "^1.4.0",
@@ -44,5 +45,10 @@
     "sortablejs": "^1.13.0",
     "tom-select": "2.2.2",
     "vue-template-compiler": "^2.6.12"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.0",
+    "laravel-mix-obfuscator": "^1.0.0",
+    "webpack-obfuscator": "^3.5.1"
   }
 }
