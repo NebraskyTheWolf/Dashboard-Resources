@@ -40,6 +40,7 @@ export default class extends ApplicationController {
         }
 
         let value = JSON.parse(this.data.get("value"))
+        let id = this.data.get('slug')
 
         // set value
         this.editor.root.innerHTML = textarea.value = value;
@@ -59,6 +60,27 @@ export default class extends ApplicationController {
             this.editor.format('background', this.customColor(value));
         });
 
+        const presenceChannel = window.PusherClient.subscribe(`presence-editor-${id}`);
+        presenceChannel.bind("pusher:subscription_succeeded", function () {
+            const me = presenceChannel.members.info;
+
+            this.editor.update();
+
+            presenceChannel.bind("pusher:member_added", function (member) {
+                const userInfo = member.info;
+                this.toast(`${userInfo.name} Joined the editor`, "warning")
+            });
+
+            presenceChannel.bind("pusher:member_removed", (member) => {
+                const userInfo = member.info;
+
+                this.toast(`${userInfo.name} Left the editor`, "warning")
+            });
+
+            presenceChannel.bind(`pusher:client-typed-text-${id}`, (data) => {
+                this.editor.setContents(data.value);
+            });
+        });
     }
 
     /**
@@ -128,22 +150,44 @@ export default class extends ApplicationController {
      */
     saveToServer(file) {
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('file', file);
 
-        if (this.data.get('groups')) {
-            formData.append('group', this.data.get('groups'));
-        }
+        fetch(`https://autumn.fluffici.eu/attachments`, {
+            method: 'post',
+            body: formData
+        }).then((res) => {
+            if (res.ok) {
+                res.json().then(async result => {
+                    this.insertToEditor(`https://autumn.fluffici.eu/attachments/${result.id}`)
+                })
+            } else {
+                this.displayError(res.json())
+            }
+        })
+    }
 
-        axios
-            .post(this.prefix('/systems/files'), formData)
-            .then((response) => {
-                this.insertToEditor(response.data.url);
-            })
-            .catch((error) => {
-                this.alert('Validation error', 'Quill image upload failed');
-                console.warn('quill image upload failed');
-                console.warn(error);
-            });
+    displayError(error) {
+        error.then(result => {
+            if (result.type === "Malware") {
+                this.toast("A malware was detected, we cannot send the file.", "danger")
+            } else if (result.type === "S3Error") {
+                this.toast("The ObjectStorage backend is offline", "danger")
+            } else if (result.type === "DatabaseError") {
+                this.toast("The database has struggles to answer.", "danger")
+            } else if (result.type === "FileTypeNotAllowed") {
+                this.toast("Incorrect file type for this tag.", "danger")
+            } else if (result.type === "UnknownTag") {
+                this.toast("This tag does not exists.", "danger")
+            } else if (result.type === "MissingData") {
+                this.toast("Missing data in the request.", "danger")
+            } else if (result.type === "FailedToReceive") {
+                this.toast("The upload was aborted.", "danger")
+            } else if (result.type === "FileTooLarge") {
+                this.toast("This file is too large ( Maximum size allowed : " + (error.max_size / 1000 / 1000) + " Mb )", "danger")
+            } else {
+                this.toast("Autumn have not responded, is the fox gone OwO? *screech*")
+            }
+        })
     }
 
     /**

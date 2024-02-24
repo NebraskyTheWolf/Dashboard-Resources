@@ -1,5 +1,6 @@
 import ApplicationController from "./application_controller";
 import * as Turbo from "@hotwired/turbo"
+import {Controller} from "@hotwired/stimulus";
 
 export default class extends ApplicationController {
 
@@ -26,6 +27,11 @@ export default class extends ApplicationController {
     connect() {
         this.updateInterval = this.setUpdateInterval();
         this.render();
+
+        const channel = window.PusherClient.subscribe("notification");
+        channel.bind(`update`, (payload) => {
+            this.render();
+        })
     }
 
     /**

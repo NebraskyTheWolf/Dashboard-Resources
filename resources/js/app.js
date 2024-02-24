@@ -33,5 +33,3 @@ window.BeamClient = new Client({
 
 window.BeamRegistrationState = RegistrationState;
 window.BeamTokenProvider = TokenProvider;
-
-
