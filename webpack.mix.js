@@ -49,14 +49,6 @@ mix
         'flatpickr', 'quill', 'codemirror', 'typo-js', 'sortablejs',
         'node:zlib', 'node-fetch'
     ])
-    .obfuscator({
-        options: {
-            domainLockRedirectUrl: 'https://dashboard.fluffici.eu'
-        },
-        exclude: [
-            'C:\\Users\\vakea\\OneDrive\\Desktop\\Dashboard-preprocessor\\node_modules'
-        ]
-    })
     .setPublicPath('public')
     .version();
 
