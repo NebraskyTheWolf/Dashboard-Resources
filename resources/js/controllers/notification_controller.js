@@ -28,10 +28,10 @@ export default class extends ApplicationController {
         this.updateInterval = this.setUpdateInterval();
         this.render();
 
-        const channel = window.PusherClient.subscribe("notification");
-        channel.bind(`update`, (payload) => {
-            this.render();
-        })
+        window.Echo.channel('notification')
+            .listen('update', (data) => {
+                this.render();
+            })
     }
 
     /**

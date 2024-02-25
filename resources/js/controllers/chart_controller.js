@@ -36,10 +36,10 @@ export default class extends ApplicationController {
         document.querySelectorAll('a[data-bs-toggle="tab"]')
             .forEach((tabElm) => { tabElm.addEventListener('shown.bs.tab', this.drawEvent); });
 
-        const channel = window.PusherClient.subscribe("chart-update");
-        channel.bind(`chart-${this.data.get('slug')}`, (payload) => {
-            chart.update(payload.data);
-        })
+        window.Echo.channel('chart-update')
+            .listen('update', (data) => {
+                this.chart.update(data)
+            })
     }
 
 

@@ -36,7 +36,7 @@
     "flatpickr": "^4.6.3",
     "frappe-charts": "^1.6.1",
     "inputmask": "^5.0.6",
-    "laravel-echo": "^1.15.3",
+    "laravel-echo": "^1.16.0",
     "laravel-mix": "^6.0.16",
     "leaflet": "^1.7.1",
     "node-fetch": "^3.3.2",

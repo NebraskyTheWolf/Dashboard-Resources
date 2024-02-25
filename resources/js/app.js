@@ -3,9 +3,9 @@ import * as Bootstrap from 'bootstrap';
 import { Application } from '@hotwired/stimulus';
 import { definitionsFromContext } from '@hotwired/stimulus-webpack-helpers';
 import ApplicationController from './controllers/application_controller';
-import { Client, RegistrationState, TokenProvider } from "@pusher/push-notifications-web";
 
-import * as Pusher from "pusher-js"
+import Pusher from "pusher-js"
+import Echo from 'laravel-echo';
 
 window.Turbo = Turbo;
 window.Bootstrap = Bootstrap;
@@ -23,19 +23,10 @@ window.addEventListener('turbo:before-fetch-request', (event) => {
     }
 });
 
-window.PusherClient =  new Pusher('a4c14476f0cf642e26e1', {
+window.Pusher = Pusher;
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'a4c14476f0cf642e26e1',
     cluster: 'eu',
-    authEndpoint: '/broadcasting/auth',
-    auth: {
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        }
-    }
+    forceTLS: true
 });
-
-window.BeamClient = new Client({
-    instanceId: "63e32cff-b20c-4c92-bb49-0e40cfd1dbe3",
-});
-
-window.BeamRegistrationState = RegistrationState;
-window.BeamTokenProvider = TokenProvider;

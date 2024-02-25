@@ -2,29 +2,53 @@ import ApplicationController from "./application_controller";
 import Quill from 'quill';
 import QuillCursors from 'quill-cursors';
 
+const CURSOR_LATENCY = 1000;
+const TEXT_LATENCY = 500;
+
 export default class extends ApplicationController {
+
     /**
+     * Initializes and configures the Quill editor for this instance.
      *
+     * This function primarily does the following:
+     * - Register the 'cursors' module.
+     * - Construct the Quill editor options.
+     * - Dispatch a 'orchid:quill' event to let other parts of application
+     *   know about the editor and its options.
+     * - Initialize the Quill editor with the defined options.
+     * - Set up several event handlers like 'text-change', 'color', 'background' etc. for the editor.
+     * - Fetches value and Id data from HTML5 data attributes.
+     *
+     * It's note-worthy where 'toolbar' gets its handlers like 'image'. In case of image, if
+     * 'base64' data attribute equals false, it binds inline function that calls 'selectLocalImage()'.
+     *
+     * 'text-change' event handler is important because it ensures the textarea's value is always in sync
+     * with the actual editor content and triggers an event signifying that text has been edited.
+     *
+     * 'color' and 'background' event handlers use 'customColor(value)' function to possibly prompt for a custom color code.
+     *
+     * A valid Quill and a textarea DOM elements must be present in the HTML for this function to work properly.
+     *
+     * The function uses properties 'this.element' and 'this.data' assuming they are set before the function is called.
      */
     connect() {
         const quill = Quill;
         const selector = this.element.querySelector('.quill').id;
-        const textarea = this.element.querySelector('textarea');
+        this.textarea = this.element.querySelector('textarea');
+
+        this.isCollaborative = this.data.get('collaborative')
 
         quill.register('modules/cursors', QuillCursors);
 
         const options = {
-            placeholder: textarea.placeholder,
-            readOnly: textarea.readOnly,
+            placeholder: this.textarea.placeholder,
+            readOnly: this.textarea.readOnly,
             theme: 'snow',
             modules: {
                 toolbar: {
                     container: this.containerToolbar(),
                 },
                 cursors: {
-                    hideDelayMs: 5000,
-                    hideSpeedMs: 0,
-                    selectionChangeSource: null,
                     transformOnTextChange: true,
                 },
             }
@@ -49,20 +73,24 @@ export default class extends ApplicationController {
             });
         }
 
-        let value = JSON.parse(this.data.get("value"))
+        this.value = JSON.parse(this.data.get("value"))
         this.id = this.data.get('slug')
 
         // set value
-        this.editor.root.innerHTML = textarea.value = value;
+        this.editor.root.innerHTML = this.textarea = this.value;
 
         // save value
         this.editor.on('text-change', () => {
             // When usage this.editor.root.innerHtml "/n/r" has been lost
-            textarea.value = this.element.querySelector('.ql-editor').innerHTML || "";
-            textarea.dispatchEvent(new Event('change'));
+            this.textarea = this.element.querySelector('.ql-editor').innerHTML || "";
+            document.dispatchEvent(new Event('change'));
 
-            this.triggerTextEdit(textarea.value)
+
+            if (this.isCollaborative)
+                this.triggerTextEdit(this.textarea.value)
         });
+
+        this.cursors.createCursor('cursor', 'You', 'red')
 
         this.editor.getModule('toolbar').addHandler('color', (value) => {
             this.editor.format('color', this.customColor(value));
@@ -72,43 +100,108 @@ export default class extends ApplicationController {
             this.editor.format('background', this.customColor(value));
         });
 
-        const presenceChannel = window.PusherClient.subscribe(`presence-editor-${this.id}`);
-        presenceChannel.bind("pusher:subscription_succeeded", function () {
-            const me = presenceChannel.members.info;
+        if (this.isCollaborative) {
+            console.log('Loading collaborative space.')
+            this.initCollaboratives()
+        }
 
-            this.toast(`${me.name} You created a new collaborative space.`, "success")
-            this.editor.update();
-            this.cursors.createCursor(me.id, me.name, 'red')
+        this.editor.on('selection-change', (range, oldRange, source) => {
+            this.debouncedUpdate = this.debounce(this.updateCursor, 500);
 
-            presenceChannel.bind("pusher:member_added", (member) => {
-                const userInfo = member.info;
-
-                this.toast(`${userInfo.name} Joined the editor`, "warning")
-                this.cursors.createCursor(me.id, me.name, 'yellow')
-                this.cursors.update()
-            });
-
-            presenceChannel.bind("pusher:member_removed", (member) => {
-                const userInfo = member.info;
-
-                this.toast(`${userInfo.name} Left the editor`, "warning")
-
-                this.cursors.removeCursor(userInfo.id)
-                this.cursors.update()
-            });
-
-            presenceChannel.bind(`client-typed-text-${this.id}`, (data) => {
-                this.editor.setContents(data.value);
-            });
+            if (source === 'user') {
+                this.updateCursor(range);
+            } else {
+                this.debouncedUpdate(range);
+            }
         });
     }
 
-    disconnect() {
-        window.PusherClient.subscribe(`presence-editor-${this.id}`);
+
+
+    /**
+     * Debounces a given function, ensuring it is called only once after a certain delay.
+     *
+     * @param {function} func - The function to be debounced.
+     * @param {number} wait - The delay in milliseconds before the debounced function is invoked.
+     * @returns {function} - Returns the debounced function.
+     */
+    debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            const context = this;
+            const later = function() {
+                timeout = null;
+                func.apply(context, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 
+    /**
+     * Initializes collaborative editing activities for the instance's presence channel.
+     *
+     * This function sets up the necessary event listeners on the instance's presence channel
+     * to support collaborative editing features. In detail:
+     * - On successful subscription to the presence channel, it informs the user, updates the editor
+     *   and creates a cursor.
+     * - On addition of a new member, it shows a toast notification, creates a cursor for the new member
+     *   and updates the cursors.
+     * - On removal of a member, it shows a toast notification and removes the member's cursor.
+     * - On receiving a typed text event, it updates the editor's content with the received data.
+     *
+     * The function relies on the PusherJS library to handle real-time events. It also makes use of
+     * this instance's `toast` method.
+     *
+     * Note: Make sure PusherClient has been correctly initialized before calling this function.
+     */
+    initCollaboratives() {
+        this.channel = window.Echo.join(`presence-editor.${this.id}`)
+            .joining(user => {
+                this.toast(`${user.name} Joined the room`, "success")
+
+                this.cursorId = `cursor#${user.id}`;
+                this.cursors.createCursor(this.cursorId , user.name, 'yellow')
+                this.cursors.clearCursors()
+            })
+            .leaving(user => {
+                this.toast(`${user.name} Left the room`, "primary")
+
+                this.cursors.removeCursor(this.cursorId)
+                this.cursors.clearCursors()
+            })
+            .listenForWhisper('editing', (data) => {
+                this.editor.updateContents({
+                    insert: data.value
+                });
+            })
+    }
+
+    updateCursor(range) {
+        // Use a timeout to simulate a high latency connection.
+        setTimeout(() => this.cursors.moveCursor(this.cursorId, range), CURSOR_LATENCY);
+    }
+
+    disconnect() {
+        this.channel.leave(`presence-editor.${this.id}`)
+    }
+
+
+    /**
+     * Triggers a text edit event on the instance's presence channel.
+     *
+     * This function makes use of the PusherJS library's trigger method to signify
+     * that the client has edited text. The event is named after the format obtained
+     * from the `getEventName()` method of the instance. The function ensures error
+     * handling in case the `presenceChannel` or `id` attributes are not initialized.
+     *
+     * @param {Object} data The data representing the text that has been edited.
+     * This could involve multiple properties depending on your application's needs (e.g., text content, author, timestamp).
+     */
     triggerTextEdit(data) {
-        window.PusherClient.channel.trigger(`client-typed-text-${this.id}`, data)
+        this.channel.whisper('editing', {
+            value: data
+        })
     }
 
     /**

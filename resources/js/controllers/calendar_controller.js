@@ -105,6 +105,13 @@ export default class extends ApplicationController {
 
             console.log(`${colorStyle[i].style.color} -> white`)
         }
+
+        if (!this.isGoogleCalendar) {
+            window.Echo.channel('calendar')
+                .listen('update', (data) => {
+                    this.calendar.render()
+                })
+        }
     }
 
     disconnect() {
