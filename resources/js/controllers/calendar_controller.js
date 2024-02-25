@@ -6,6 +6,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import googleCalendar from '@fullcalendar/google-calendar';
+import bootstrap5plugin from '@fullcalendar/bootstrap5';
 
 export default class extends ApplicationController {
 
@@ -26,20 +27,19 @@ export default class extends ApplicationController {
 
         if (this.isGoogleCalendar) {
             this.calendar = new Calendar(this.calendarEL, {
-                plugins: [dayGridPlugin, timeGridPlugin, listPlugin,  googleCalendar, interactionPlugin ],
+                plugins: [dayGridPlugin, timeGridPlugin, listPlugin,  googleCalendar, interactionPlugin, bootstrap5plugin ],
                 locale: this.locale,
                 googleCalendarApiKey: this.googleCalendarAPI,
                 events: {
                     googleCalendarId: this.googleCalendarURL
                 },
-                editable: this.editable,
-                droppable: true,
                 headerToolbar: {
                     left: 'prev,next',
                     center: 'title',
                     right: 'dayGridWeek,dayGridDay'
                 },
-                selectable: true
+                eventTextColor: '#fff',
+                themeSystem: 'bootstrap5'
             });
 
             console.log('Google calendar detected.')
@@ -49,7 +49,7 @@ export default class extends ApplicationController {
         } else {
             this.calendar = new Calendar(this.calendarEL, {
                 timeZone: 'Europe/Prague',
-                plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
+                plugins: [ dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, bootstrap5plugin ],
                 eventSources: [
                     {
                         url: `https://dashboard.fluffici.eu/api/calendar/events?calendarId=${this.slug}`,
@@ -72,7 +72,8 @@ export default class extends ApplicationController {
                     center: 'title',
                     right: 'dayGridWeek,dayGridDay'
                 },
-                selectable: true
+                selectable: true,
+                themeSystem: 'bootstrap5'
             });
 
             console.log('Custom sourced calendar detected.')
@@ -97,6 +98,13 @@ export default class extends ApplicationController {
         }
 
         this.autoUpdate()
+
+        const colorStyle = document.getElementsByClassName('fc-title');
+        for (let i=0; i<colorStyle.length; i++) {
+            colorStyle[i].style.color = 'white';
+
+            console.log(`${colorStyle[i].style.color} -> white`)
+        }
     }
 
     disconnect() {

@@ -1,5 +1,6 @@
 import ApplicationController from "./application_controller";
 import Quill from 'quill';
+import QuillCursors from 'quill-cursors';
 
 export default class extends ApplicationController {
     /**
@@ -10,6 +11,8 @@ export default class extends ApplicationController {
         const selector = this.element.querySelector('.quill').id;
         const textarea = this.element.querySelector('textarea');
 
+        quill.register('modules/cursors', QuillCursors);
+
         const options = {
             placeholder: textarea.placeholder,
             readOnly: textarea.readOnly,
@@ -18,7 +21,13 @@ export default class extends ApplicationController {
                 toolbar: {
                     container: this.containerToolbar(),
                 },
-            },
+                cursors: {
+                    hideDelayMs: 5000,
+                    hideSpeedMs: 0,
+                    selectionChangeSource: null,
+                    transformOnTextChange: true,
+                },
+            }
         };
 
         // Dispatch the event for customization and installation of plugins
@@ -30,6 +39,7 @@ export default class extends ApplicationController {
         }));
 
         this.editor = new quill(`#${selector}`, options);
+        this.cursors = this.editor.getModule('cursors');
 
         // quill editor add image handler
         let isBase64Format = JSON.parse(this.data.get('base64'));
@@ -40,7 +50,7 @@ export default class extends ApplicationController {
         }
 
         let value = JSON.parse(this.data.get("value"))
-        let id = this.data.get('slug')
+        this.id = this.data.get('slug')
 
         // set value
         this.editor.root.innerHTML = textarea.value = value;
@@ -50,6 +60,8 @@ export default class extends ApplicationController {
             // When usage this.editor.root.innerHtml "/n/r" has been lost
             textarea.value = this.element.querySelector('.ql-editor').innerHTML || "";
             textarea.dispatchEvent(new Event('change'));
+
+            this.triggerTextEdit(textarea.value)
         });
 
         this.editor.getModule('toolbar').addHandler('color', (value) => {
@@ -60,27 +72,43 @@ export default class extends ApplicationController {
             this.editor.format('background', this.customColor(value));
         });
 
-        const presenceChannel = window.PusherClient.subscribe(`presence-editor-${id}`);
+        const presenceChannel = window.PusherClient.subscribe(`presence-editor-${this.id}`);
         presenceChannel.bind("pusher:subscription_succeeded", function () {
             const me = presenceChannel.members.info;
 
+            this.toast(`${me.name} You created a new collaborative space.`, "success")
             this.editor.update();
+            this.cursors.createCursor(me.id, me.name, 'red')
 
-            presenceChannel.bind("pusher:member_added", function (member) {
+            presenceChannel.bind("pusher:member_added", (member) => {
                 const userInfo = member.info;
+
                 this.toast(`${userInfo.name} Joined the editor`, "warning")
+                this.cursors.createCursor(me.id, me.name, 'yellow')
+                this.cursors.update()
             });
 
             presenceChannel.bind("pusher:member_removed", (member) => {
                 const userInfo = member.info;
 
                 this.toast(`${userInfo.name} Left the editor`, "warning")
+
+                this.cursors.removeCursor(userInfo.id)
+                this.cursors.update()
             });
 
-            presenceChannel.bind(`pusher:client-typed-text-${id}`, (data) => {
+            presenceChannel.bind(`client-typed-text-${this.id}`, (data) => {
                 this.editor.setContents(data.value);
             });
         });
+    }
+
+    disconnect() {
+        window.PusherClient.subscribe(`presence-editor-${this.id}`);
+    }
+
+    triggerTextEdit(data) {
+        window.PusherClient.channel.trigger(`client-typed-text-${this.id}`, data)
     }
 
     /**

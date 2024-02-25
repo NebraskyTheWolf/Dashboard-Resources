@@ -24,7 +24,13 @@ window.addEventListener('turbo:before-fetch-request', (event) => {
 });
 
 window.PusherClient =  new Pusher('a4c14476f0cf642e26e1', {
-    cluster: 'eu'
+    cluster: 'eu',
+    authEndpoint: '/broadcasting/auth',
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        }
+    }
 });
 
 window.BeamClient = new Client({
