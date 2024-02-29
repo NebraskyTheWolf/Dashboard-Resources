@@ -50,7 +50,7 @@ mix
         'node:zlib', 'node-fetch', 'pusher-js', '@fullcalendar/daygrid',
         '@fullcalendar/timegrid', '@fullcalendar/list', '@fullcalendar/interaction',
         '@fullcalendar/google-calendar', '@pusher/push-notifications-web', '@fullcalendar/core',
-        '@fullcalendar/bootstrap5', 'quill-cursors', 'laravel-echo'
+        '@fullcalendar/bootstrap5', 'quill-cursors', 'laravel-echo', '@github/relative-time-element'
     ])
     .setPublicPath('public')
     .version();

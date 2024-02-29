@@ -64,6 +64,8 @@ export default class extends ApplicationController {
 
         this.editor = new quill(`#${selector}`, options);
         this.cursors = this.editor.getModule('cursors');
+        // Initializing the default cursor.
+        this.cursors.createCursor('cursor', 'You', 'red')
 
         // quill editor add image handler
         let isBase64Format = JSON.parse(this.data.get('base64'));
@@ -157,18 +159,19 @@ export default class extends ApplicationController {
      */
     initCollaboratives() {
         this.channel = window.Echo.join(`presence-editor.${this.id}`)
+            .here(users => {
+
+            })
             .joining(user => {
                 this.toast(`${user.name} Joined the room`, "success")
 
                 this.cursorId = `cursor#${user.id}`;
                 this.cursors.createCursor(this.cursorId , user.name, 'yellow')
-                this.cursors.clearCursors()
             })
             .leaving(user => {
                 this.toast(`${user.name} Left the room`, "primary")
 
                 this.cursors.removeCursor(this.cursorId)
-                this.cursors.clearCursors()
             })
             .listenForWhisper('editing', (data) => {
                 this.editor.updateContents({
