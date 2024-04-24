@@ -1,3 +1,26 @@
+@mixin borderRadius($radius) {
+    border-radius: $radius !important;
+}
+
+// Nice fox bottom UwU
+@mixin borderRadiusBottom($radius) {
+    border-bottom-right-radius: $radius !important;
+    border-bottom-left-radius: $radius !important;
+}
+
+@mixin margin($top, $right: null, $bottom: null, $left: null) {
+    margin-top: $top !important;
+    @if $right != null {
+        margin-right: $right !important;
+    }
+    @if $bottom != null {
+        margin-bottom: $bottom !important;
+    }
+    @if $left != null {
+        margin-left: $left !important;
+    }
+}
+
 .body-primary {
     background-color: honeydew;
 }
@@ -5,52 +28,67 @@
 .footer-primary {
     position: sticky;
     height: 110px;
-    top: calc( 100vh - 100px );
+    top: calc(100vh - 100px);
 }
 
 .content-nav {
     display: flex;
-    border-bottom-left-radius: 25px!important;
-    border-bottom-right-radius: 25px!important;
-    height: 89px!important;
-    background-color: #374040!important;
+    @include borderRadiusBottom(25px);
+    height: 89px;
+    background-color: #374040;
     width: auto;
     overflow: hidden;
-}
 
-.content-nav .nav-bar {
-    display: inline-flex;
-    margin-top: 8px;
-    margin-left:30%!important;
-    border-radius: 25px;
-    border-color: #0e1414!important;
-    background-color: #293333!important;
-    justify-content:space-between;
-    width: 891px;
-    height: 70px;
-}
+    .nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 60%; // Adjust the width as needed
+        margin: 0 auto;
 
-.content-nav .logo {
-    margin-top: 8px;
-    margin-left:2%!important
-}
+        @media screen and (max-width: 768px) {
+            width: 100%;
+            padding: 0 10px; // Add some padding to adjust spacing
+            justify-content: center; // Center the items on mobile
+            margin-right: 100%;
+        }
+    }
 
-.content-nav .neon {
-    margin-left:3%!important
-}
+    .logo {
+        margin-top: 8px;
+        margin-left: 2%;
 
-.content-nav .arrow {
-    margin-bottom: 40px!important;
-    margin-left:0.4rem!important;
+        @media screen and (max-width: 768px) {
+            padding: 0 10px;
+            width: 128px;
+            height: 128px;
+        }
+    }
+
+    .neon {
+        margin-left: 3%;
+
+        @media screen and (max-width: 768px) {
+            margin-left: 10%;
+        }
+    }
+
+    .arrow {
+        margin-bottom: 40px;
+        margin-left: 0.4rem;
+
+        @media screen and (max-width: 768px) {
+            margin-left: 10%;
+        }
+    }
 }
 
 .title {
     display: block;
-    font-family: "Luckiest Guy";
+    font-family: "Luckiest Guy", serif;
     text-transform: uppercase;
     font-size: xxx-large;
-    margin-left:4.4rem!important;
-    margin-top: 160px;
+    @include margin(160px, null, null, 4.4rem);
     color: white;
 }
 
@@ -60,14 +98,11 @@
     display: inline;
     width: 150px;
     height: 50px;
-    margin-top: -10px;
-    margin-left:50%!important;
+    @include margin(-10px, null, null, 50%);
 }
 
 .content-container {
-    border-top-left-radius: 25px!important;
-    border-top-right-radius: 25px!important;
-
+    @include borderRadius(25px);
     display: block;
     background-color: #0e1414;
     position: relative;
@@ -81,37 +116,57 @@
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: cover;
-
     height: 100%;
-
     position: sticky;
     overflow: hidden;
+
+    &:after {
+        height: 75px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        transform-origin: bottom right;
+        width: 103%;
+        padding-bottom: 7.1%;
+        left: -1.5%;
+    }
+
+    h2.ui.header {
+        color: #fff;
+        font-weight: 300;
+        font-size: 30px;
+        @include margin(70px, 30px, 40px);
+    }
+
+    h2.ui.header p {
+        font-size: 18px;
+        margin-left: 65px;
+    }
 }
 
-.site-header:after {
-    height: 75px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
+/* Media Queries for Mobile */
+@media only screen and (max-width: 768px) {
+    .content-nav .nav-bar {
+        margin-left: 5%;
+        width: 100%;
+    }
 
-    transform-origin: bottom right;
+    .title {
+        font-size: large;
+        @include margin(100px, null, null, 2rem);
+    }
 
-    width: 103%;
-    padding-bottom: 7.1%;
-    left: -1.5%;
-}
+    .button-title {
+        @include margin(null, null, null, 25%);
+    }
 
-.site-header h2.ui.header {
-    color: #fff;
-    font-weight: 300;
-    font-size: 30px;
+    .site-header h2.ui.header {
+        font-size: 20px;
+        @include margin(30px, 15px, 20px);
+    }
 
-    margin-top: 70px;
-    margin-left: 30px;
-    margin-bottom: 40px;
-}
-
-.site-header h2.ui.header p {
-    font-size: 18px;
-    margin-left: 65px;
+    .site-header h2.ui.header p {
+        font-size: 14px;
+        margin-left: 30px;
+    }
 }
